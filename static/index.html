@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Resume Roaster 🔥</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Mono:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0a0a0a;
+    --surface: #111111;
+    --border: #222222;
+    --border-hot: #ff4500;
+    --accent: #ff4500;
+    --accent2: #ff8c00;
+    --text: #f0f0f0;
+    --muted: #666;
+    --success: #22c55e;
+    --font-display: 'Syne', sans-serif;
+    --font-mono: 'DM Mono', monospace;
+  }
+
+  html, body { height: 100%; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-mono);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* noise overlay */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .container {
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 0 24px 80px;
+    position: relative;
+    z-index: 1;
+  }
+
+  header {
+    padding: 60px 0 40px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 48px;
+  }
+
+  .logo {
+    font-family: var(--font-display);
+    font-size: clamp(2.4rem, 6vw, 4rem);
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    line-height: 1;
+    background: linear-gradient(135deg, #ff4500 0%, #ff8c00 50%, #ffd700 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .tagline {
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    color: var(--muted);
+    margin-top: 10px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .badge {
+    display: inline-block;
+    background: var(--accent);
+    color: #fff;
+    font-size: 0.7rem;
+    font-weight: 500;
+    padding: 2px 8px;
+    border-radius: 2px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-left: 10px;
+    vertical-align: middle;
+    position: relative;
+    top: -4px;
+  }
+
+  .form-section {
+    display: grid;
+    gap: 28px;
+  }
+
+  .field {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  label {
+    font-family: var(--font-display);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  label span { color: var(--accent); }
+
+  textarea {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    color: var(--text);
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    line-height: 1.6;
+    padding: 16px;
+    resize: vertical;
+    min-height: 160px;
+    transition: border-color 0.2s;
+    outline: none;
+  }
+
+  textarea:focus {
+    border-color: var(--accent);
+  }
+
+  textarea::placeholder { color: var(--muted); }
+
+  /* Drop zone */
+  .dropzone {
+    border: 1.5px dashed var(--border);
+    border-radius: 4px;
+    padding: 36px 24px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: var(--surface);
+    position: relative;
+  }
+
+  .dropzone:hover, .dropzone.drag-over {
+    border-color: var(--accent);
+    background: rgba(255, 69, 0, 0.05);
+  }
+
+  .dropzone input[type="file"] {
+    position: absolute; inset: 0;
+    opacity: 0; cursor: pointer;
+    width: 100%; height: 100%;
+  }
+
+  .drop-icon {
+    font-size: 2rem;
+    margin-bottom: 8px;
+  }
+
+  .drop-text {
+    font-size: 0.85rem;
+    color: var(--muted);
+  }
+
+  .drop-text strong {
+    color: var(--accent);
+    font-weight: 500;
+  }
+
+  .file-chosen {
+    display: none;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.85rem;
+    color: var(--success);
+    justify-content: center;
+    margin-top: 8px;
+  }
+
+  .file-chosen.visible { display: flex; }
+
+  .btn {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 0.95rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    padding: 16px 32px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .btn-primary {
+    background: var(--accent);
+    color: #fff;
+    width: 100%;
+  }
+
+  .btn-primary:hover:not(:disabled) {
+    background: #e03d00;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 24px rgba(255,69,0,0.35);
+  }
+
+  .btn-primary:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  /* Loading */
+  .loader {
+    display: none;
+    align-items: center;
+    gap: 12px;
+    justify-content: center;
+    padding: 32px;
+    color: var(--muted);
+    font-size: 0.85rem;
+  }
+
+  .loader.visible { display: flex; }
+
+  .flame-loader {
+    font-size: 1.4rem;
+    animation: flicker 0.6s ease-in-out infinite alternate;
+  }
+
+  @keyframes flicker {
+    from { transform: scale(1) rotate(-5deg); opacity: 0.8; }
+    to   { transform: scale(1.15) rotate(5deg); opacity: 1; }
+  }
+
+  /* Result */
+  #result {
+    display: none;
+    margin-top: 48px;
+    animation: fadeUp 0.4s ease;
+  }
+
+  #result.visible { display: block; }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .result-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .result-title {
+    font-family: var(--font-display);
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--accent);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  .copy-btn {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    padding: 6px 14px;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .copy-btn:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  .roast-content {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    border-radius: 4px;
+    padding: 28px;
+    font-size: 0.88rem;
+    line-height: 1.75;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+
+  .error-box {
+    background: rgba(255,69,0,0.08);
+    border: 1px solid rgba(255,69,0,0.3);
+    border-radius: 4px;
+    padding: 16px 20px;
+    font-size: 0.85rem;
+    color: #ff6b6b;
+    display: none;
+    margin-top: 12px;
+  }
+
+  .error-box.visible { display: block; }
+
+  footer {
+    margin-top: 80px;
+    padding-top: 24px;
+    border-top: 1px solid var(--border);
+    font-size: 0.75rem;
+    color: var(--muted);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .status-dot {
+    width: 6px; height: 6px;
+    background: var(--success);
+    border-radius: 50%;
+    display: inline-block;
+    margin-right: 6px;
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <div class="logo">Resume Roaster <span style="font-size:0.7em">🔥</span></div>
+    <div class="tagline">Paste the JD. Upload your PDF. Get cooked. <span class="badge">Groq AI</span></div>
+  </header>
+
+  <div class="form-section">
+    <div class="field">
+      <label>Job Description <span>*</span></label>
+      <textarea id="jd" placeholder="Paste the full job description here — the more detail, the sharper the roast..."></textarea>
+    </div>
+
+    <div class="field">
+      <label>Your Resume <span>*</span> <span style="color:var(--muted);font-size:0.9em;text-transform:none;letter-spacing:0">(PDF only)</span></label>
+      <div class="dropzone" id="dropzone">
+        <input type="file" id="resumeFile" accept=".pdf" />
+        <div class="drop-icon">📄</div>
+        <div class="drop-text"><strong>Click to upload</strong> or drag and drop your PDF</div>
+      </div>
+      <div class="file-chosen" id="fileChosen">
+        <span>✅</span>
+        <span id="fileName"></span>
+      </div>
+    </div>
+
+    <div class="error-box" id="errorBox"></div>
+
+    <button class="btn btn-primary" id="roastBtn" onclick="submitRoast()">
+      🔥 Roast My Resume
+    </button>
+
+    <div class="loader" id="loader">
+      <span class="flame-loader">🔥</span>
+      <span>Groq is reading your life choices...</span>
+    </div>
+  </div>
+
+  <div id="result">
+    <div class="result-header">
+      <div class="result-title">🔥 The Verdict</div>
+      <button class="copy-btn" onclick="copyRoast()">Copy</button>
+    </div>
+    <div class="roast-content" id="roastContent"></div>
+  </div>
+
+  <footer>
+    <div><span class="status-dot"></span>Service online</div>
+    <div>resume-roaster · Go + Groq</div>
+  </footer>
+</div>
+
+<script>
+  const dropzone = document.getElementById('dropzone');
+  const fileInput = document.getElementById('resumeFile');
+  const fileChosen = document.getElementById('fileChosen');
+  const fileName = document.getElementById('fileName');
+
+  fileInput.addEventListener('change', () => {
+    if (fileInput.files[0]) {
+      fileName.textContent = fileInput.files[0].name;
+      fileChosen.classList.add('visible');
+    }
+  });
+
+  dropzone.addEventListener('dragover', e => { e.preventDefault(); dropzone.classList.add('drag-over'); });
+  dropzone.addEventListener('dragleave', () => dropzone.classList.remove('drag-over'));
+  dropzone.addEventListener('drop', e => {
+    e.preventDefault();
+    dropzone.classList.remove('drag-over');
+    const f = e.dataTransfer.files[0];
+    if (f && f.name.endsWith('.pdf')) {
+      const dt = new DataTransfer();
+      dt.items.add(f);
+      fileInput.files = dt.files;
+      fileName.textContent = f.name;
+      fileChosen.classList.add('visible');
+    }
+  });
+
+  function showError(msg) {
+    const box = document.getElementById('errorBox');
+    box.textContent = '⚠ ' + msg;
+    box.classList.add('visible');
+  }
+
+  function clearError() {
+    document.getElementById('errorBox').classList.remove('visible');
+  }
+
+  async function submitRoast() {
+    clearError();
+    const jd = document.getElementById('jd').value.trim();
+    const file = fileInput.files[0];
+
+    if (!jd) { showError('Please paste a job description.'); return; }
+    if (!file) { showError('Please upload your resume PDF.'); return; }
+
+    const btn = document.getElementById('roastBtn');
+    const loader = document.getElementById('loader');
+    const result = document.getElementById('result');
+
+    btn.disabled = true;
+    loader.classList.add('visible');
+    result.classList.remove('visible');
+
+    const fd = new FormData();
+    fd.append('jd', jd);
+    fd.append('resume', file);
+
+    try {
+      const resp = await fetch('/roast', { method: 'POST', body: fd });
+      const data = await resp.json();
+
+      if (!resp.ok || data.error) {
+        showError(data.error || 'Something went wrong.');
+        return;
+      }
+
+      document.getElementById('roastContent').textContent = data.roast;
+      result.classList.add('visible');
+      result.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    } catch (e) {
+      showError('Network error — is the server running?');
+    } finally {
+      btn.disabled = false;
+      loader.classList.remove('visible');
+    }
+  }
+
+  async function copyRoast() {
+    const text = document.getElementById('roastContent').textContent;
+    await navigator.clipboard.writeText(text);
+    const btn = document.querySelector('.copy-btn');
+    btn.textContent = 'Copied!';
+    setTimeout(() => btn.textContent = 'Copy', 2000);
+  }
+</script>
+</body>
+</html>
